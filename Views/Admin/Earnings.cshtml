@@ -1,0 +1,59 @@
+@model IEnumerable<ElectricGadget.Web.Models.Entities.Order>
+
+@{
+    ViewData["Title"] = "Earnings Report";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Sales & Earnings Report</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <h3 class="card-text">৳@Model.Sum(o => o.TotalAmount)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <h3 class="card-text">@Model.Count()</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.CustomerName</td>
+                    <td>@order.OrderDate.ToShortDateString()</td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li>@item.Product?.Name (x@item.Quantity)</li>
+                            }
+                        </ul>
+                    </td>
+                    <td class="fw-bold text-success">৳@order.TotalAmount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

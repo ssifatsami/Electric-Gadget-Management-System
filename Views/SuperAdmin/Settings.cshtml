@@ -1,0 +1,119 @@
+@model ElectricGadget.Web.Models.Entities.SystemSettings
+@{
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    ViewData["Title"] = "System Settings";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <h5 style="font-weight:700;margin:0;">System Settings</h5>
+            <p style="color:var(--sa-muted);font-size:0.85rem;margin:4px 0 0;">Configure company information, currency, timezone and language</p>
+        </div>
+
+        <form asp-action="Settings" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <!-- Company Info -->
+            <div class="sa-card mb-4">
+                <div class="sa-card-header">
+                    <i class="bi bi-building" style="color:#6366f1;"></i> Company Information
+                </div>
+                <div class="sa-card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Company / System Name *</label>
+                                <input type="text" name="CompanyName" class="sa-form-control"
+                                       value="@Model.CompanyName" required placeholder="Electric Gadget Store" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Logo URL</label>
+                                <input type="text" name="LogoUrl" class="sa-form-control"
+                                       value="@Model.LogoUrl" placeholder="https://..." />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Support Email</label>
+                                <input type="email" name="SupportEmail" class="sa-form-control"
+                                       value="@Model.SupportEmail" placeholder="support@store.com" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Phone</label>
+                                <input type="text" name="Phone" class="sa-form-control"
+                                       value="@Model.Phone" placeholder="+880 1700-000000" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locale Settings -->
+            <div class="sa-card mb-4">
+                <div class="sa-card-header">
+                    <i class="bi bi-globe2" style="color:#10b981;"></i> Locale & Regional Settings
+                </div>
+                <div class="sa-card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Currency</label>
+                                <select name="Currency" class="sa-form-control">
+                                    <option value="BDT"   selected="@(Model.Currency == "BDT")">৳ BDT – Bangladeshi Taka</option>
+                                    <option value="USD"   selected="@(Model.Currency == "USD")">$ USD – US Dollar</option>
+                                    <option value="EUR"   selected="@(Model.Currency == "EUR")">€ EUR – Euro</option>
+                                    <option value="GBP"   selected="@(Model.Currency == "GBP")">£ GBP – British Pound</option>
+                                    <option value="INR"   selected="@(Model.Currency == "INR")">₹ INR – Indian Rupee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Timezone</label>
+                                <select name="Timezone" class="sa-form-control">
+                                    <option value="Asia/Dhaka"     selected="@(Model.Timezone == "Asia/Dhaka")">Asia/Dhaka (GMT+6)</option>
+                                    <option value="Asia/Kolkata"   selected="@(Model.Timezone == "Asia/Kolkata")">Asia/Kolkata (GMT+5:30)</option>
+                                    <option value="Asia/Dubai"     selected="@(Model.Timezone == "Asia/Dubai")">Asia/Dubai (GMT+4)</option>
+                                    <option value="Europe/London"  selected="@(Model.Timezone == "Europe/London")">Europe/London (GMT+0)</option>
+                                    <option value="America/New_York" selected="@(Model.Timezone == "America/New_York")">America/New_York (GMT-5)</option>
+                                    <option value="UTC"            selected="@(Model.Timezone == "UTC")">UTC</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Language</label>
+                                <select name="Language" class="sa-form-control">
+                                    <option value="English"  selected="@(Model.Language == "English")">English</option>
+                                    <option value="Bengali"  selected="@(Model.Language == "Bengali")">বাংলা (Bengali)</option>
+                                    <option value="Hindi"    selected="@(Model.Language == "Hindi")">हिंदी (Hindi)</option>
+                                    <option value="Arabic"   selected="@(Model.Language == "Arabic")">العربية (Arabic)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.UpdatedAt != default)
+            {
+                <p style="color:var(--sa-muted);font-size:0.78rem;margin-bottom:16px;">
+                    <i class="bi bi-clock"></i> Last updated: @Model.UpdatedAt.ToString("dd MMM yyyy HH:mm")
+                </p>
+            }
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="sa-btn sa-btn-primary flex-grow-1 justify-content-center py-3">
+                    <i class="bi bi-check-lg"></i> Save Settings
+                </button>
+                <a href="/SuperAdmin" class="sa-btn sa-btn-ghost px-4">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

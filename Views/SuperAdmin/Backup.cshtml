@@ -1,0 +1,84 @@
+@{
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    ViewData["Title"] = "Security & Data Recovery";
+}
+
+<div class="row g-4">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="mb-1" style="font-weight:700;">Security & Data Recovery</h5>
+                <p style="color:var(--sa-muted);font-size:0.85rem;margin:0;">Secure your system data with manual or scheduled data exports</p>
+            </div>
+            <form method="post" action="/SuperAdmin/CreateBackup">
+                <button type="submit" class="sa-btn sa-btn-primary">
+                    <i class="bi bi-download"></i> Backup & Download Data
+                </button>
+            </form>
+        </div>
+
+        <div class="sa-card mb-4">
+            <div class="sa-card-header">
+                <i class="bi bi-clock-history" style="color:#6366f1;"></i> Backup History
+            </div>
+            <div>
+                <table class="sa-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Date</th>
+                            <th>Size</th>
+                            <th>Type</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var backup in ViewBag.Backups)
+                        {
+                            <tr>
+                                <td><i class="bi bi-file-earmark-zip me-2"></i> @backup.Name</td>
+                                <td>@backup.Date.ToString("dd MMM yyyy, HH:mm")</td>
+                                <td>@backup.Size</td>
+                                <td>
+                                    <span class="sa-badge @(backup.Type == "Auto" ? "sa-badge-info" : "sa-badge-accent")">
+                                        @backup.Type
+                                    </span>
+                                </td>
+                                <td style="text-align:right;">
+                                    <div style="display:flex;gap:6px;justify-content:flex-end;">
+                                        <button class="sa-btn sa-btn-success" style="padding:5px 12px;" title="Restore">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Restore
+                                        </button>
+                                        <form method="post" action="/SuperAdmin/CreateBackup" style="display:inline;">
+                                            <button type="submit" class="sa-btn sa-btn-ghost" style="padding:5px 12px;" title="Download">
+                                                <i class="bi bi-download"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="sa-card" style="background:rgba(239,68,68,0.03);border-color:rgba(239,68,68,0.2);">
+            <div class="sa-card-header" style="color:var(--sa-danger);">
+                <i class="bi bi-exclamation-triangle-fill"></i> System Restore
+            </div>
+            <div class="sa-card-body">
+                <p style="font-size:0.85rem;color:var(--sa-muted);">
+                    Restoring the system will overwrite all current data with the selected backup file. 
+                    This action is irreversible. Please ensure you have a current backup before proceeding.
+                </p>
+                <div class="d-flex gap-3 mt-3">
+                    <input type="file" class="sa-form-control" style="flex:1;" />
+                    <button class="sa-btn sa-btn-danger">
+                        <i class="bi bi-shield-lock"></i> Perform System Restore
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

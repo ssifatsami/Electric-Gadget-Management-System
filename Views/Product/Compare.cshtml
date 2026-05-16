@@ -1,0 +1,158 @@
+@model IEnumerable<ElectricGadget.Web.Models.Entities.Product>
+
+@{
+    ViewData["Title"] = "Compare Products";
+    var p1 = Model.FirstOrDefault();
+    var p2 = Model.LastOrDefault();
+}
+
+<div class="compare-page py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-dark">Side-by-Side Comparison</h1>
+            <p class="text-muted">Compare specifications and features to find the perfect gadget for you.</p>
+        </div>
+
+        <div class="comparison-wrapper bg-white shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table comparison-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="spec-label-col">Specifications</th>
+                            @foreach (var item in Model)
+                            {
+                                <th class="product-header">
+                                    <div class="product-top">
+                                        <div class="img-wrapper mb-3">
+                                            <img src="@item.ImageUrl" alt="@item.Name" />
+                                        </div>
+                                        <span class="badge bg-primary-subtle text-primary mb-2">@item.Brand.Name</span>
+                                        <h4 class="fw-bold mb-1">@item.Name</h4>
+                                        <p class="text-muted small">@item.Model</p>
+                                    </div>
+                                    <div class="product-price mt-3">
+                                        <h3 class="fw-bold text-primary">৳@item.Price.ToString("N0")</h3>
+                                        <button class="btn btn-primary btn-sm w-100 rounded-pill mt-2">Add to Cart</button>
+                                    </div>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="section-divider">
+                            <td colspan="3" class="bg-light fw-bold py-3 px-4">General Details</td>
+                        </tr>
+                        <tr>
+                            <td class="spec-label">Brand</td>
+                            @foreach (var item in Model) { <td>@item.Brand.Name</td> }
+                        </tr>
+                        <tr>
+                            <td class="spec-label">Model</td>
+                            @foreach (var item in Model) { <td>@(item.Model ?? "N/A")</td> }
+                        </tr>
+                        <tr>
+                            <td class="spec-label">Warranty</td>
+                            @foreach (var item in Model) { <td>@(item.Warranty ?? "N/A")</td> }
+                        </tr>
+                        <tr>
+                            <td class="spec-label">Rating</td>
+                            @foreach (var item in Model)
+                            {
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                        <span class="text-warning"><i class="bi bi-star-fill"></i> @item.AverageRating.ToString("0.1")</span>
+                                        <span class="text-muted small">(@item.Reviews.Count reviews)</span>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                        
+                        <tr class="section-divider">
+                            <td colspan="3" class="bg-light fw-bold py-3 px-4">Key Features</td>
+                        </tr>
+                        @{
+                            var allFeatureNames = Model.SelectMany(m => m.Features).Select(f => f.FeatureName).Distinct().ToList();
+                        }
+                        @foreach (var featName in allFeatureNames)
+                        {
+                            <tr>
+                                <td class="spec-label">@featName</td>
+                                @foreach (var item in Model)
+                                {
+                                    var hasFeat = item.Features.Any(f => f.FeatureName == featName);
+                                    <td>
+                                        @if (hasFeat) { <i class="bi bi-check-circle-fill text-success fs-5"></i> }
+                                        else { <i class="bi bi-dash text-muted"></i> }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i> Back to Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .compare-page {
+        background-color: #f8fafc;
+        min-height: 100vh;
+    }
+    .comparison-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .spec-label-col {
+        width: 250px;
+        background: #f1f5f9;
+        vertical-align: bottom;
+        padding: 2rem !important;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #475569;
+    }
+    .product-header {
+        padding: 2rem !important;
+        text-align: center;
+        vertical-align: top;
+        width: 350px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .img-wrapper {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+    .img-wrapper:hover {
+        transform: scale(1.05);
+    }
+    .img-wrapper img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    .spec-label {
+        font-weight: 600;
+        color: #64748b;
+        background: #f8fafc;
+        padding: 1.25rem 2rem !important;
+    }
+    .comparison-table td {
+        padding: 1.25rem !important;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .comparison-table tr:hover td {
+        background-color: #f1f5f9;
+    }
+</style>

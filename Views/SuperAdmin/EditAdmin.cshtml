@@ -1,0 +1,121 @@
+@model ElectricGadget.Web.Models.Entities.User
+@{
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    ViewData["Title"] = "Edit Admin";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="mb-4">
+            <a href="/SuperAdmin/ManageAdmins" class="sa-btn sa-btn-ghost" style="margin-bottom:16px;">
+                <i class="bi bi-arrow-left"></i> Back to Admins
+            </a>
+            <h5 style="font-weight:700;margin:0;">Edit Admin: <span style="color:var(--sa-accent);">@Model.UserID</span></h5>
+            <p style="color:var(--sa-muted);font-size:0.85rem;margin:4px 0 0;">Update admin details and permissions</p>
+        </div>
+
+        <div class="sa-card">
+            <div class="sa-card-header">
+                <i class="bi bi-pencil-fill" style="color:#6366f1;"></i> Edit Details
+            </div>
+            <div class="sa-card-body">
+                <form asp-action="EditAdmin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="UserID" value="@Model.UserID" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Full Name *</label>
+                                <input type="text" name="Name" class="sa-form-control" value="@Model.Name" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Username (ID)</label>
+                                <input type="text" class="sa-form-control" value="@Model.UserID" disabled
+                                       style="opacity:0.5;cursor:not-allowed;" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">New Password <small style="color:var(--sa-muted);">(leave blank to keep)</small></label>
+                                <input type="password" name="Password" class="sa-form-control" placeholder="New password" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Email</label>
+                                <input type="email" name="Email" class="sa-form-control" value="@Model.Email" />
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="sa-form-group">
+                                <label class="sa-form-label">Assign Branch</label>
+                                <select name="BranchId" class="sa-form-control">
+                                    <option value="">— No Branch —</option>
+                                    @foreach (var item in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Branches)
+                                    {
+                                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permissions -->
+                    <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:20px;margin:8px 0 20px;">
+                        <p style="font-weight:600;font-size:0.875rem;margin-bottom:14px;color:#a5b4fc;">
+                            <i class="bi bi-key-fill"></i> Permissions
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;">
+                                    <label class="sa-switch">
+                                        <input type="checkbox" name="CanAccessInventory" value="true" @(Model.CanAccessInventory ? "checked" : "") />
+                                        <span class="sa-switch-slider"></span>
+                                    </label>
+                                    Inventory Access
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;">
+                                    <label class="sa-switch">
+                                        <input type="checkbox" name="CanAccessBilling" value="true" @(Model.CanAccessBilling ? "checked" : "") />
+                                        <span class="sa-switch-slider"></span>
+                                    </label>
+                                    Billing Access
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;">
+                                    <label class="sa-switch">
+                                        <input type="checkbox" name="CanDownloadReports" value="true" @(Model.CanDownloadReports ? "checked" : "") />
+                                        <span class="sa-switch-slider"></span>
+                                    </label>
+                                    Download Reports
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;">
+                                    <label class="sa-switch">
+                                        <input type="checkbox" name="CanManageUsers" value="true" @(Model.CanManageUsers ? "checked" : "") />
+                                        <span class="sa-switch-slider"></span>
+                                    </label>
+                                    User Management
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="sa-btn sa-btn-primary flex-grow-1 justify-content-center py-3">
+                            <i class="bi bi-check-lg"></i> Save Changes
+                        </button>
+                        <a href="/SuperAdmin/ManageAdmins" class="sa-btn sa-btn-ghost px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

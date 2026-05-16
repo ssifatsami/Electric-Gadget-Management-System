@@ -1,0 +1,67 @@
+@model IEnumerable<ElectricGadget.Web.Models.Entities.Product>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm">
+        <div>
+            <h2 class="fw-bold text-primary mb-0">Inventory Management</h2>
+            <p class="text-muted mb-0">Manage your store's electric gadgets and stock levels.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i>Add New Product
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Product</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="@item.ImageUrl" class="rounded-3 me-3" style="width: 45px; height: 45px; object-fit: cover;" alt="">
+                                    <div>
+                                        <div class="fw-bold">@item.Name</div>
+                                        <div class="text-muted small text-truncate" style="max-width: 200px;">@item.Description</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info text-dark rounded-pill px-3">@item.Brand.Name</span>
+                            </td>
+                            <td class="fw-bold text-primary">৳@item.Price</td>
+                            <td>
+                                @if (item.Stock < 10)
+                                {
+                                    <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>@item.Stock Low</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success fw-bold">@item.Stock in stock</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-circle me-1"><i class="bi bi-pencil"></i></a>
+                                <button class="btn btn-sm btn-outline-danger rounded-circle"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,164 @@
+@model IEnumerable<ElectricGadget.Web.Models.Entities.AuditLog>
+@{
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    ViewData["Title"] = "Audit Logs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="mb-1" style="font-weight:700;">Audit Logs</h5>
+        <p style="color:var(--sa-muted);font-size:0.85rem;margin:0;">Track all system changes by admins and users</p>
+    </div>
+    <form method="post" action="/SuperAdmin/ClearLogs"
+          onsubmit="return confirm('Clear ALL audit logs? This cannot be undone.');">
+        <button type="submit" class="sa-btn sa-btn-danger">
+            <i class="bi bi-trash3-fill"></i> Clear All Logs
+        </button>
+    </form>
+</div>
+
+<!-- Filters & Summary Chart -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="sa-card h-100">
+            <div class="sa-card-body" style="padding:24px;">
+                <h6 class="mb-3" style="font-weight:600;color:var(--sa-text);">Filter Logs</h6>
+                <form method="get" action="/SuperAdmin/AuditLogs" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="sa-form-label">Module</label>
+                        <select name="module" class="sa-form-control">
+                            <option value="">All Modules</option>
+                            <option value="Admin"          selected="@(ViewBag.Module=="Admin")">Admin</option>
+                            <option value="Product"        selected="@(ViewBag.Module=="Product")">Product</option>
+                            <option value="User"           selected="@(ViewBag.Module=="User")">User</option>
+                            <option value="Branch"         selected="@(ViewBag.Module=="Branch")">Branch</option>
+                            <option value="Permissions"    selected="@(ViewBag.Module=="Permissions")">Permissions</option>
+                            <option value="SystemSettings" selected="@(ViewBag.Module=="SystemSettings")">Settings</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="sa-form-label">Search</label>
+                        <input type="text" name="search" class="sa-form-control"
+                               placeholder="User or details..." value="@ViewBag.Search" />
+                    </div>
+                    <div class="col-12 d-flex gap-2 pt-2">
+                        <button type="submit" class="sa-btn sa-btn-primary">
+                            <i class="bi bi-search"></i> Apply Filters
+                        </button>
+                        <a href="/SuperAdmin/AuditLogs" class="sa-btn sa-btn-ghost">
+                            <i class="bi bi-x-lg"></i> Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="sa-card h-100">
+            <div class="sa-card-body d-flex align-items-center justify-content-center" style="padding:16px;">
+                @if (ViewBag.ModuleLabels != null && ((List<string>)ViewBag.ModuleLabels).Any())
+                {
+                    <div style="width:100%;max-width:200px;">
+                        <canvas id="moduleChart" height="200"></canvas>
+                    </div>
+                    <div class="ms-4">
+                        <h6 class="mb-2" style="font-size:0.85rem;font-weight:600;">Activity Share</h6>
+                        <p style="font-size:0.75rem;color:var(--sa-muted);margin:0;">Distribution of actions across system modules.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4" style="color:var(--sa-muted);">
+                        <i class="bi bi-pie-chart" style="font-size:2rem;opacity:.3;"></i>
+                        <p style="font-size:0.8rem;margin:0;">No chart data</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sa-card">
+    @if (Model.Any())
+    {
+        <table class="sa-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Details</th>
+                    <th>Performed By</th>
+                    <th>IP Address</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 1;}
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td style="color:var(--sa-muted);font-size:0.78rem;">@i</td>
+                        <td>
+                            @{
+                                var cls = log.Action == "Delete"     ? "sa-badge-danger"
+                                        : log.Action == "Create"     ? "sa-badge-success"
+                                        : log.Action == "Activated"  ? "sa-badge-success"
+                                        : log.Action == "Suspended"  ? "sa-badge-warning"
+                                        : "sa-badge-info";
+                            }
+                            <span class="sa-badge @cls">@log.Action</span>
+                        </td>
+                        <td><span class="sa-badge sa-badge-accent">@log.Module</span></td>
+                        <td style="font-size:0.82rem;max-width:280px;color:var(--sa-text);">@log.Details</td>
+                        <td>
+                            <div style="font-size:0.82rem;font-weight:500;">@log.UserName</div>
+                            <div style="font-size:0.72rem;color:var(--sa-muted);">@log.UserId</div>
+                        </td>
+                        <td style="color:var(--sa-muted);font-size:0.78rem;">@(log.IpAddress ?? "—")</td>
+                        <td style="font-size:0.78rem;color:var(--sa-muted);">
+                            <div>@log.Timestamp.ToString("dd MMM yyyy")</div>
+                            <div>@log.Timestamp.ToString("HH:mm:ss")</div>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="text-center py-5" style="color:var(--sa-muted);">
+            <i class="bi bi-journal-x" style="font-size:3rem;opacity:.3;"></i>
+            <p class="mt-3">No audit logs found.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    const moduleCtx = document.getElementById('moduleChart');
+    if (moduleCtx) {
+        new Chart(moduleCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.ModuleLabels)),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(ViewBag.ModuleData)),
+                    backgroundColor: [
+                        '#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+</script>
+}

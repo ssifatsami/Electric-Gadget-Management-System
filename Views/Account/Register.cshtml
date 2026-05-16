@@ -1,0 +1,418 @@
+@model ElectricGadget.Web.Models.Entities.User
+
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Electric Gadget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-blue: #185aff;
+            --primary-hover: #1048d6;
+            --bg-light: #f5f7fa;
+            --text-dark: #141928;
+            --text-gray: #646e78;
+            --border-color: #e5e8ec;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-container {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+            min-height: 700px;
+            overflow: hidden;
+        }
+
+        /* Left Branding Panel */
+        .auth-branding {
+            background-color: #f4f6fb;
+            width: 45%;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-dark);
+            margin-bottom: auto;
+        }
+
+        .brand-logo i {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+        }
+
+        .branding-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .branding-content h1 span {
+            color: var(--primary-blue);
+            display: block;
+        }
+
+        .branding-content p {
+            font-size: 1.125rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: auto;
+            margin-top: 24px;
+        }
+
+        .branding-footer {
+            margin-top: 40px;
+            font-size: 0.875rem;
+            color: #9aa3af;
+        }
+
+        /* Right Form Panel */
+        .auth-form-wrapper {
+            width: 55%;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .auth-header {
+            display: flex;
+            justify-content: flex-end;
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 0.9375rem;
+            color: var(--text-gray);
+        }
+
+        .auth-header a {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 6px;
+        }
+
+        .auth-header a:hover {
+            text-decoration: underline;
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .form-header p {
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group i.icon-left {
+            position: absolute;
+            left: 16px;
+            color: #9aa3af;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-control::placeholder {
+            color: #9aa3af;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(24, 90, 255, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #9aa3af;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-dark);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+            margin-top: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            margin-top: 2px;
+            accent-color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        .checkbox-group a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(24, 90, 255, 0.2);
+        }
+
+        /* Responsive Breakpoints */
+        @@media (max-width: 992px) {
+            .auth-branding {
+                display: none;
+            }
+            .auth-form-wrapper {
+                width: 100%;
+                padding: 48px;
+            }
+            .auth-container {
+                max-width: 500px;
+                min-height: auto;
+            }
+            .auth-header {
+                position: static;
+                justify-content: center;
+                margin-top: 32px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            body {
+                padding: 16px;
+            }
+            .auth-form-wrapper {
+                padding: 32px 24px;
+            }
+            .form-header h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <!-- Left Branding Panel -->
+        <div class="auth-branding">
+            <div class="brand-logo">
+                <i class="bi bi-lightning-charge-fill"></i>
+                Electric Gadget
+            </div>
+            
+            <div class="branding-content">
+                <h1>Smart Gadgets,<br><span>Better Living</span></h1>
+                <p>Create an account and explore<br>the latest electric gadgets.</p>
+            </div>
+
+            <div class="branding-footer">
+                &copy; @DateTime.Now.Year Electric Gadget. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="auth-form-wrapper">
+            <div class="auth-header">
+                Already have an account? <a href="@Url.Action("Login", "Account")">Log in</a>
+            </div>
+
+            <div class="form-header">
+                <h2>Create your account</h2>
+                <p>Sign up to get started</p>
+            </div>
+
+            <form asp-action="Register" method="post" id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <i class="bi bi-person icon-left"></i>
+                        <input asp-for="Name" class="form-control" placeholder="Enter your full name" required autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <i class="bi bi-envelope icon-left"></i>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email address" required autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number (Optional)</label>
+                    <div class="input-group">
+                        <i class="bi bi-telephone icon-left"></i>
+                        <input type="tel" name="Phone" class="form-control" placeholder="Enter your phone number">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="bi bi-lock icon-left"></i>
+                        <input asp-for="Password" type="password" id="password" class="form-control" placeholder="Create a password" required autocomplete="new-password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('password', this)" tabindex="-1">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <i class="bi bi-lock-fill icon-left"></i>
+                        <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" placeholder="Confirm your password" required autocomplete="new-password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)" tabindex="-1">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+
+                <!-- Keep UserID hidden for the model -->
+                <input type="hidden" asp-for="UserID" value="@("USR" + new Random().Next(1000,9999))" />
+
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const pass = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            if (pass !== confirm) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
+    </script>
+</body>
+</html>

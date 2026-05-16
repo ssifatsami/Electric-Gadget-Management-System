@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] – Super Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sa-bg:        #070a13;
+            --sa-sidebar:   #0d111d;
+            --sa-card:      #121926;
+            --sa-border:    #1f2937;
+            --sa-accent:    #6366f1;
+            --sa-accent-glow: rgba(99, 102, 241, 0.5);
+            --sa-accent2:   #a855f7;
+            --sa-text:      #f1f5f9;
+            --sa-muted:     #94a3b8;
+            --sa-success:   #10b981;
+            --sa-warning:   #f59e0b;
+            --sa-danger:    #ef4444;
+            --sa-info:      #0ea5e9;
+            --sa-glass:     rgba(18, 25, 38, 0.7);
+        }
+        [data-theme="light"] {
+            --sa-bg:        #f8fafc;
+            --sa-sidebar:   #ffffff;
+            --sa-card:      #ffffff;
+            --sa-border:    #e2e8f0;
+            --sa-text:      #1e293b;
+            --sa-muted:     #64748b;
+            --sa-glass:     rgba(255, 255, 255, 0.8);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--sa-bg);
+            color: var(--sa-text);
+            min-height: 100vh;
+            display: flex;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────── */
+        .sa-sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--sa-sidebar);
+            border-right: 1px solid var(--sa-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sa-brand {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--sa-border);
+        }
+        .sa-brand-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--sa-accent), var(--sa-accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .sa-brand-sub {
+            font-size: 0.7rem;
+            color: var(--sa-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 3px;
+        }
+        .sa-badge-role {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--sa-accent), var(--sa-accent2));
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+        .sa-nav { padding: 16px 0; flex: 1; }
+        .sa-nav-section {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--sa-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 16px 24px 6px;
+        }
+        .sa-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 24px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+        .sa-nav-link:hover {
+            color: var(--sa-text);
+            background: rgba(99,102,241,0.08);
+            border-left-color: var(--sa-accent);
+        }
+        .sa-nav-link.active {
+            color: var(--sa-accent);
+            background: rgba(99,102,241,0.12);
+            border-left-color: var(--sa-accent);
+        }
+        .sa-nav-link i { font-size: 1rem; width: 20px; text-align: center; }
+        .sa-sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--sa-border);
+        }
+        .sa-user-info { display: flex; align-items: center; gap: 10px; }
+        .sa-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--sa-accent), var(--sa-accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem; color: #fff;
+            flex-shrink: 0;
+        }
+        .sa-user-name  { font-size: 0.85rem; font-weight: 600; }
+        .sa-user-role  { font-size: 0.7rem; color: var(--sa-muted); }
+
+        /* ── Main Content ────────────────────────────────── */
+        .sa-main {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .sa-topbar {
+            background: var(--sa-sidebar);
+            border-bottom: 1px solid var(--sa-border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .sa-topbar-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+        .sa-topbar-actions { display: flex; gap: 16px; align-items: center; }
+        .sa-icon-btn {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--sa-card); border: 1px solid var(--sa-border);
+            color: var(--sa-text); cursor: pointer; transition: 0.2s;
+            position: relative;
+        }
+        .sa-icon-btn:hover { background: var(--sa-border); transform: translateY(-2px); }
+        .sa-icon-btn .dot {
+            position: absolute; top: 8px; right: 8px;
+            width: 8px; height: 8px; background: var(--sa-danger);
+            border-radius: 50%; border: 2px solid var(--sa-card);
+        }
+        .sa-content { padding: 40px; flex: 1; }
+
+        /* ── Cards ───────────────────────────────────────── */
+        .sa-card {
+            background: var(--sa-card);
+            border: 1px solid var(--sa-border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .sa-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--sa-border);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sa-card-body { padding: 24px; }
+
+        /* ── Stat Cards ──────────────────────────────────── */
+        .sa-stat {
+            background: var(--sa-card);
+            border: 1px solid var(--sa-border);
+            border-radius: 14px;
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .sa-stat:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .sa-stat-icon {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+        }
+        .sa-stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1; }
+        .sa-stat-label { font-size: 0.78rem; color: var(--sa-muted); margin-top: 4px; }
+
+        /* ── Table ───────────────────────────────────────── */
+        .sa-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .sa-table th {
+            background: rgba(30,41,59,0.8);
+            color: var(--sa-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--sa-border);
+            text-align: left;
+        }
+        .sa-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--sa-border);
+            vertical-align: middle;
+        }
+        .sa-table tr:last-child td { border-bottom: none; }
+        .sa-table tr:hover td { background: rgba(99,102,241,0.04); }
+
+        /* ── Badges ──────────────────────────────────────── */
+        .sa-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.72rem; font-weight: 600; padding: 4px 10px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .sa-badge-success { background: rgba(16,185,129,0.15); color: var(--sa-success); }
+        .sa-badge-danger  { background: rgba(239,68,68,0.15);  color: var(--sa-danger);  }
+        .sa-badge-warning { background: rgba(245,158,11,0.15); color: var(--sa-warning); }
+        .sa-badge-info    { background: rgba(59,130,246,0.15); color: var(--sa-info);    }
+        .sa-badge-accent  { background: rgba(99,102,241,0.15); color: var(--sa-accent);  }
+
+        /* ── Buttons ─────────────────────────────────────── */
+        .sa-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
+            font-size: 0.82rem; font-weight: 600; transition: all 0.2s; text-decoration: none;
+        }
+        .sa-btn-primary {
+            background: linear-gradient(135deg, var(--sa-accent), var(--sa-accent2));
+            color: #fff;
+        }
+        .sa-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); color: #fff; }
+        .sa-btn-danger  { background: rgba(239,68,68,0.15); color: var(--sa-danger); border: 1px solid rgba(239,68,68,0.3); }
+        .sa-btn-danger:hover { background: var(--sa-danger); color: #fff; }
+        .sa-btn-success { background: rgba(16,185,129,0.15); color: var(--sa-success); border: 1px solid rgba(16,185,129,0.3); }
+        .sa-btn-success:hover { background: var(--sa-success); color: #fff; }
+        .sa-btn-warning { background: rgba(245,158,11,0.15); color: var(--sa-warning); border: 1px solid rgba(245,158,11,0.3); }
+        .sa-btn-warning:hover { background: var(--sa-warning); color: #111; }
+        .sa-btn-ghost   { background: transparent; color: var(--sa-muted); border: 1px solid var(--sa-border); }
+        .sa-btn-ghost:hover { color: var(--sa-text); border-color: var(--sa-text); }
+
+        /* ── Form Controls ───────────────────────────────── */
+        .sa-form-control {
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid var(--sa-border);
+            border-radius: 8px;
+            color: var(--sa-text);
+            padding: 10px 14px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+        .sa-form-control:focus { outline: none; border-color: var(--sa-accent); background: #1e293b; color: var(--sa-text); }
+        .sa-form-label { font-size: 0.8rem; font-weight: 500; color: var(--sa-muted); margin-bottom: 6px; display: block; }
+        .sa-form-group { margin-bottom: 18px; }
+
+        /* ── Alert ───────────────────────────────────────── */
+        .sa-alert {
+            padding: 12px 18px; border-radius: 10px; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sa-alert-success { background: rgba(16,185,129,0.12); color: var(--sa-success); border: 1px solid rgba(16,185,129,0.25); }
+
+        /* ── Toggle Switch ───────────────────────────────── */
+        .sa-switch { position: relative; width: 42px; height: 24px; }
+        .sa-switch input { opacity: 0; width: 0; height: 0; }
+        .sa-switch-slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: var(--sa-border); border-radius: 24px; transition: 0.3s;
+        }
+        .sa-switch-slider:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background: white; border-radius: 50%; transition: 0.3s;
+        }
+        input:checked + .sa-switch-slider { background: var(--sa-accent); }
+        input:checked + .sa-switch-slider:before { transform: translateX(18px); }
+
+        /* ── Scrollbar ───────────────────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--sa-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--sa-border); border-radius: 3px; }
+
+        /* ── Toast ───────────────────────────────────────── */
+        .sa-toast {
+            position: fixed; top: 24px; right: 24px; z-index: 9999;
+            background: var(--sa-card); border: 1px solid var(--sa-border);
+            border-left: 4px solid var(--sa-success);
+            border-radius: 12px; padding: 14px 20px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: slideIn 0.4s ease;
+        }
+        @@keyframes slideIn { from { transform: translateX(100px); opacity:0; } to { transform: translateX(0); opacity:1; } }
+    </style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────────────────────────────────────── -->
+<aside class="sa-sidebar">
+    <div class="sa-brand">
+        <div style="font-size:1.6rem; margin-bottom:6px;">⚡</div>
+        <div class="sa-brand-title">Electric Gadget</div>
+        <div class="sa-brand-sub">Control Center</div>
+        <span class="sa-badge-role">Super Admin</span>
+    </div>
+
+    <nav class="sa-nav">
+        <div class="sa-nav-section">Overview</div>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="Index"?"active":"")"
+           href="/SuperAdmin">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </a>
+
+        <div class="sa-nav-section">User Control</div>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="ManageAdmins"?"active":"")"
+           href="/SuperAdmin/ManageAdmins">
+            <i class="bi bi-shield-person-fill"></i> Manage Admins
+        </a>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="ManageUsers"?"active":"")"
+           href="/SuperAdmin/ManageUsers">
+            <i class="bi bi-people-fill"></i> Customers
+        </a>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="Permissions"?"active":"")"
+           href="/SuperAdmin/Permissions">
+            <i class="bi bi-key-fill"></i> Permissions
+        </a>
+
+        <div class="sa-nav-section">Organization</div>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="Branches"?"active":"")"
+           href="/SuperAdmin/Branches">
+            <i class="bi bi-diagram-3-fill"></i> Branches
+        </a>
+
+        <div class="sa-nav-section">System</div>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="Settings"?"active":"")"
+           href="/SuperAdmin/Settings">
+            <i class="bi bi-gear-fill"></i> System Settings
+        </a>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="Backup"?"active":"")"
+           href="/SuperAdmin/Backup">
+            <i class="bi bi-cloud-arrow-up-fill"></i> Data Backup
+        </a>
+        <a class="sa-nav-link @(ViewContext.RouteData.Values["action"]?.ToString()=="AuditLogs"?"active":"")"
+           href="/SuperAdmin/AuditLogs">
+            <i class="bi bi-journal-text"></i> Audit Logs
+        </a>
+
+        <div class="sa-nav-section">Store</div>
+        <a class="sa-nav-link" href="/Admin">
+            <i class="bi bi-box-seam-fill"></i> Inventory
+        </a>
+        <a class="sa-nav-link" href="/Admin/Earnings">
+            <i class="bi bi-graph-up-arrow"></i> Revenue
+        </a>
+    </nav>
+
+    <div class="sa-sidebar-footer">
+        <div class="sa-user-info">
+            <div class="sa-avatar">SA</div>
+            <div>
+                <div class="sa-user-name">@(Context.Session.GetString("UserName") ?? "Super Admin")</div>
+                <div class="sa-user-role">Super Administrator</div>
+            </div>
+        </div>
+        <a href="/Account/Logout" class="sa-btn sa-btn-ghost w-100 mt-3 justify-content-center">
+            <i class="bi bi-box-arrow-left"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────────────────────────── -->
+<div class="sa-main">
+    <div class="sa-topbar">
+        <div class="sa-topbar-title">@(ViewData["Title"] ?? "Dashboard")</div>
+        <div class="sa-topbar-actions">
+            <div class="sa-icon-btn" id="themeToggle" title="Toggle Theme">
+                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </div>
+            <div class="sa-icon-btn" title="Notifications">
+                <i class="bi bi-bell-fill"></i>
+                <div class="dot"></div>
+            </div>
+            <div style="width: 1px; height: 24px; background: var(--sa-border); margin: 0 4px;"></div>
+            <span style="font-size:0.85rem; color:var(--sa-muted); font-weight:500;">
+                <i class="bi bi-calendar3 me-2"></i>@DateTime.Now.ToString("ddd, dd MMM yyyy")
+            </span>
+            <a href="/Admin" class="sa-btn sa-btn-primary" style="font-size:0.78rem; border-radius:10px;">
+                <i class="bi bi-arrow-left-right"></i> Admin Console
+            </a>
+        </div>
+    </div>
+
+    <div class="sa-content">
+        @if (TempData["Success"] != null)
+        {
+            <div class="sa-toast" id="toastMsg">
+                <i class="bi bi-check-circle-fill" style="color:var(--sa-success);font-size:1.2rem;"></i>
+                <span>@TempData["Success"]</span>
+                <button onclick="document.getElementById('toastMsg').remove()"
+                        style="background:none;border:none;color:var(--sa-muted);cursor:pointer;margin-left:auto;">✕</button>
+            </div>
+        }
+        @RenderBody()
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+<script>
+    // Theme Toggle Logic
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
+
+    themeBtn.addEventListener('click', () => {
+        if (body.getAttribute('data-theme') === 'light') {
+            body.removeAttribute('data-theme');
+            themeIcon.className = 'bi bi-moon-stars-fill';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.setAttribute('data-theme', 'light');
+            themeIcon.className = 'bi bi-sun-fill';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+        body.setAttribute('data-theme', 'light');
+        themeIcon.className = 'bi bi-sun-fill';
+    }
+
+    // Auto-dismiss toast
+    setTimeout(() => { const t = document.getElementById('toastMsg'); if(t) t.remove(); }, 4000);
+</script>
+</body>
+</html>
